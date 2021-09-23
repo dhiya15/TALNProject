@@ -1,0 +1,100 @@
+# coding=utf-8
+### Python 3.7
+########## Main External Grader( : Trained Model = Linear Ridge PolynomialFeatures d° 2 ###########
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import codecs as c
+import numpy as np
+import pandas as pd
+import io
+import os
+import sys
+import xml.etree.ElementTree as etree
+from nltk import word_tokenize
+from sklearn.metrics.pairwise import cosine_similarity
+from io import StringIO
+import csv
+from nltk import word_tokenize
+import re
+# from sklearn.metrics import mean_squared_error
+from math import sqrt
+from scipy.stats.stats import pearsonr
+from math import *
+import linecache as cc
+from collections import Counter
+import string
+from nltk.corpus import stopwords
+import pickle
+from sklearn.preprocessing import PolynomialFeatures
+import json
+import sys
+import datapreprocessing as prep
+import GlobalVar as glob
+import DomainKnowledge
+import AnswerStatistics
+import WordWeighting
+import GapQuestion
+
+
+def getScore(phrase1,phrase2):
+    ####### 4. Word Embedding
+    print(phrase1)
+    print(phrase2)
+    prep.generateModelsForLanguage()
+#### Cosine(ModelAnswer,phrase2) using WE
+    #WE_ResponsesVectors =DomainKnowledge.WE_AllQuestionCorpus(phrase2, glob.DictioWE)
+    # Returns the context vector of sentence from WE 
+    WE_ResponsesVectors =DomainKnowledge.getVecteurSentenceWE(phrase2, glob.DictioWE)
+    #WE_ModelsVectors = DomainKnowledge.WE_ModelResponses(phrase1, glob.DictioWE)
+    WE_ModelsVectors = DomainKnowledge.getVecteurSentenceWE(phrase1, glob.DictioWE)
+    simcos = DomainKnowledge.cosine_similarity(WE_ResponsesVectors.reshape(1, -1), WE_ModelsVectors.reshape(1, -1))
+    print("Cosine(phrase1,phrase2) using WE", simcos)
+
+
+#### Cosine(ModelAnswer,phrase2) using WE with TFMinMax Ponderation
+    # this function return the WE sentence vector with  tf-minmax ponderation
+    vetf = WordWeighting.getSentenceWEtMinMaxPonderation(WordWeighting.getDictionnaireTFIDF(
+            glob.pathDictionnaire), WordWeighting.getDictionnaireTFIDF(glob.pathMinMax) ,phrase1,glob.DictioWE)
+    # WE_ModelsVectors = DomainKnowledge.WE_ModelResponses(phrase1, glob.DictioWE)
+    vetfm = WordWeighting.getSentenceWEtMinMaxPonderation(WordWeighting.getDictionnaireTFIDF(
+            glob.pathDictionnaire), WordWeighting.getDictionnaireTFIDF(glob.pathMinMax) ,phrase2,glob.DictioWE)
+    simcostf=cosine_similarity(vetf.reshape(1, -1) , vetfm.reshape(1, -1))
+    print("Cosine(phrase1,phrase2) using WE tf-minmax",simcostf)
+
+
+######################"
+
+
+with c.open("txt1.txt", "r", "utf-8")as f:
+    txt1= f.read()
+fichier1 = txt1.split("\n")
+
+with c.open("txt2.txt", "r", "utf-8")as f:
+    txt2 = f.read()
+fichier2 = txt2.split("\n")
+data=[]
+f=0
+for i in range ((len(fichier2)-3)):
+    print(f)
+    phrase1= fichier1[f]
+    phrase2=fichier2[f]
+    sim=getScore(phrase1, phrase2)
+    data.append(sim)
+    f = f + 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,328 @@
+#damarou levenshtein
+def levenshtein(s1, s2):
+    d = {}
+    lenstr1 = len(s1)
+    lenstr2 = len(s2)
+    for i in range(-1,lenstr1+1):
+        d[(i,-1)] = i+1
+    for j in range(-1,lenstr2+1):
+        d[(-1,j)] = j+1
+ 
+    for i in range(lenstr1):
+        for j in range(lenstr2):
+            if s1[i] == s2[j]:
+                cost = 0
+            else:
+                cost = 1
+            d[(i,j)] = min(
+                           d[(i-1,j)] + 1, # deletion
+                           d[(i,j-1)] + 1, # insertion
+                           d[(i-1,j-1)] + cost, # substitution
+                          )
+            if i and j and s1[i]==s2[j-1] and s1[i-1] == s2[j]:
+                d[(i,j)] = min (d[(i,j)], d[i-2,j-2] + cost) # transposition
+ 
+    return 1-(d[lenstr1-1,lenstr2-1]/max(lenstr1,lenstr2))
+
+
+
+s = "hello word"
+t = "have a nice day"
+apply = levenshtein(s, t)
+print(apply)
+
+
+
+
+
+
+
+
+"""import numpy as np
+from scipy import spatial
+
+index2word_set = set(model.wv.index2word)
+
+def avg_feature_vector(sentence, model, num_features, index2word_set):
+    words = sentence.split()
+    feature_vec = np.zeros((num_features, ), dtype='float32')
+    n_words = 0
+    for word in words:
+        if word in index2word_set:
+            n_words += 1
+            feature_vec = np.add(feature_vec, model[word])
+    if (n_words > 0):
+        feature_vec = np.divide(feature_vec, n_words)
+    return feature_vec
+
+
+
+s1_afv = avg_feature_vector('this is a sentence', model=model, num_features=300, index2word_set=index2word_set)
+s2_afv = avg_feature_vector('this is also sentence', model=model, num_features=300, index2word_set=index2word_set)
+sim = 1 - spatial.distance.cosine(s1_afv, s2_afv)
+print(sim)"""
+"""import gensim
+from gensim import models
+#load word2vec model, here GoogleNews is used
+model = gensim.models.KeyedVectors.load_word2vec_format('../GoogleNews-vectors-negative300.bin', binary=True)
+#two sample sentences 
+s1 = 'the first sentence'
+s2 = 'the second text'
+
+#calculate distance between two sentences using WMD algorithm
+distance = model.wmdistance(s1, s2)
+
+print ('distance = %.3f' % distance)"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+#test manhattan with numpy
+import numpy as np
+vector1 = np.array([1,2,3])
+vector2 = np.array([4,5,6])
+ 
+op3=np.sum(np.abs(vector1-vector2))
+op4=np.linalg.norm(vector1-vector2,ord=1)
+
+
+print(op3)
+print(op4)"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""import WORD2VEC as WORD2VEC
+import fin as fin
+import numpy as np
+from joblib.numpy_pickle_utils import xrange
+
+
+def parse (VECTOR_PATH, WORD2VEC):
+    print ('Start loading vectors ...')    
+    vecDic = {}    
+    vectors = None
+    fin = open(VECTOR_PATH, "rb")  
+    header = fin.readline()
+    vocab_size, vector_size = map(int, header.split())    
+    if(WORD2VEC): #for CBOW or Skip-gram
+        binary_len = np.dtype(np.float32).itemsize * vector_size
+    else: # for GloVe
+        binary_len = np.dtype(np.float64).itemsize * vector_size
+    for line_no in xrange(vocab_size):                
+        word = ''
+        while True:
+            ch = fin.read(1)
+            if ch == ' ' and WORD2VEC == 1:
+                break
+		    elif ch == '#' and WORD2VEC == 0:
+				break
+            word += ch    
+        if(WORD2VEC):       
+            vector = np.fromstring(fin.read(binary_len), np.float32)
+        else:                                                       
+            vector = np.fromstring(fin.read(binary_len), np.float64)                   
+        word = word.strip()
+        vecDic[word] = vector        
+    print ('finished loading vectors ...')
+    return vecDic"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""from sklearn.feature_extraction.text import TfidfVectorizer
+obj = TfidfVectorizer()
+corpus = ['This is sample document.', 'another random document.', 'third sample document text']
+X = obj.fit_transform(corpus)
+#print (X)
+"""
+"""import gensim
+from gensim import Word2Vec
+sentences = [['data', 'science'], ['vidhya', 'science', 'data', 'analytics'],['machine', 'learning'], ['deep', 'learning']]
+
+# train the model on your corpus  
+model = gensim.Word2Vec(sentences, min_count = 1)
+
+print (model.most_similar('data', 'science'))
+
+
+print (model['learning']) """
+
+"""def levenshtein(s1,s2): 
+    if len(s1) > len(s2):
+        s1,s2 = s2,s1 
+    distances = range(len(s1) + 1) 
+    for index2,char2 in enumerate(s2):
+        newDistances = [index2+1]
+        for index1,char1 in enumerate(s1):
+            if char1 == char2:
+                newDistances.append(distances[index1]) 
+            else:
+                 newDistances.append(1 + min((distances[index1], distances[index1+1], newDistances[-1]))) 
+        distances = newDistances 
+    return distances[-1]
+
+
+list = []
+file1 = open("/home/fatima/PycharmProjects/NewTestProject/sentenceCouple/ccinfo X cyber attack.txt", "r")
+for line in file1:
+    list.append(line)
+
+for i in range(len(list)):
+   
+   print("la distance entre:" + list[i] + " et " + list[i+1] + "est : ", levenshtein(list[i], list[i+1]))
+   i = i+1"""
+"""import math
+from collections import Counter
+
+
+def get_cosine(vec1, vec2):
+    common = set(vec1.keys()) & set(vec2.keys())
+    numerator = sum([vec1[x] * vec2[x] for x in common])
+
+    sum1 = sum([vec1[x] ** 2 for x in vec1.keys()])
+    sum2 = sum([vec2[x] ** 2 for x in vec2.keys()])
+    denominator = math.sqrt(sum1) * math.sqrt(sum2)
+
+    if not denominator:
+        return 0.0
+    else:
+        return float(numerator) / denominator
+
+
+def text_to_vector(text):
+    words = text.split()
+    return Counter(words)
+
+
+text1 = "لقد انتصرنا وحصلنا على الاستقلال"
+text2 = "لقد انتصرنا وحصلنا على الاستقلال"
+
+vector1 = text_to_vector(text1)
+vector2 = text_to_vector(text2)
+cosine = get_cosine(vector1, vector2)
+print(cosine)"""
+
+
+
+
+"""import re
+file3 = open("CcinfoCyberAttack.txt", "a")  # output file
+
+file1 = open('ISriStemFiles/ccinfo_IsriStem.txt', 'r')  # input file1
+file2 = open('ISriStemFiles/cyber attack_IsriStem.txt', 'r')  # input file2
+
+
+list_of_sent1 = []  #
+list_of_sent2 = []
+
+for line in file1:
+ stripped_line = line.strip()
+ line_list = stripped_line.split(r'.\\n')
+ if line_list != "":
+  list_of_sent1.append(line_list)
+
+file1.close()
+
+for linee in file2:
+ stripped_linee = linee.strip()
+ linee_list = stripped_linee.split(r'.\\n')
+ if linee_list != "":
+  list_of_sent2.append(linee_list)
+
+file2.close()
+
+data = []
+#print(list_of_sent1)
+#print(list_of_sent2)
+
+for i in range(len(list_of_sent1)):
+ if list_of_sent1[i] != "" or list_of_sent1[i] != "\n":
+  for j in range(len(list_of_sent2)):
+   if list_of_sent2[j] != "" or list_of_sent2[j] != "\n":
+    data.append(list_of_sent1[i])
+    data.append(list_of_sent2[j])
+   else:
+    continue
+ else:
+  continue
+ # print(data)
+
+for element in data:
+ file3.write(f"{element}")
+ file3.write("\n")"""
+
+
+"""from nltk import sent_tokenize
+
+input = open("textBruts/ccinfo.txt", "r")
+output = open('ccinfo_senttoken.txt', 'a')
+lines = input.readlines()
+for line in lines:
+ #sentence = re.split(r' *[\.\?!][\'\n"\)\]]* . *', line)
+ sentence = sent_tokenize(line)
+ output.write(f"{sentence}")
+ output.write("\n")"""
+
+
+
+
+
+
+

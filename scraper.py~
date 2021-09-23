@@ -1,0 +1,62 @@
+import sys
+import requests
+from bs4 import BeautifulSoup
+import random
+
+query = "ازمة كورونا"
+
+res = requests.get(f'https://ar.wikipedia.org/'+ {query} + ' '.join(sys.argv[1:]))
+res.raise_for_status()
+wiki = BeautifulSoup(res.text, "html.parser")
+for i in wiki.select('p'):
+    print(i.getText())
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""def scrapeWikiArticle(url):
+   response = requests.get(url=url,)
+	
+   soup = BeautifulSoup(response.content, 'html.parser')
+
+   title = soup.find(id="firstHeading")
+   print(title.text)
+   list(soup.children)
+  
+        # find all occurance of p in HTML
+        # includes HTML tags
+   print(soup.find_all('p'))
+  
+   print('\n\n')
+  
+        # return only text
+        # does not include HTML tags
+   print(soup.find_all('p')[0].get_text())
+
+   allLinks = soup.find(id="bodyContent").find_all("a")
+   random.shuffle(allLinks)
+   linkToScrape = 0
+
+   for link in allLinks:
+      # We are only interested in other wiki articles
+     if link['href'].find("/wiki/") == -1: 
+      continue
+
+     # Use this link to scrape
+     linkToScrape = link
+      break
+
+ scrapeWikiArticle("https://en.wikipedia.org" + linkToScrape['href'])
+
+scrapeWikiArticle("https://en.wikipedia.org/wiki/Web_scraping")"""
